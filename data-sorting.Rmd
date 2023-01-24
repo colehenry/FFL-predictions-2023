@@ -9,23 +9,38 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+```{r}
+# data scraping from pro football reference
+install.packages('rvest')
+library(rvest)
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+simple <- read_html("https://www.pro-football-reference.com/years/2022/opp.htm") %>%
+  html_nodes(".table_wrapper") %>%
+  html_text()
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+library(readr)
+main <- parse_number(simple)
 
-```{r cars}
-summary(cars)
-head(cars)
+simple
 ```
 
-## Including Plots
+```{r}
+#reading in data
+library(readr)
+X2022TeamDefense <- read_csv("2022TeamDefense.csv")
+X2022PassingDefense <- read_csv("2022PassingDefense.csv")
 
-You can also embed plots, for example:
+#removing un-needed avg rows
+X2022PassingDefense <- X2022PassingDefense[-c(33:35),]
+X2022TeamDefense <- X2022TeamDefense[-c(33:35),]
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+#from espn 2022FFL
+TotFantasyPts <- c(158,102,122,120,102,105,87,153,138,97,78,106,102,98,84,100,173,32,115,97,156,89,94,91,69,129,89,111,55,64,71,80)
+X2022PassingDefense <- cbind(X2022PassingDefense,TotfantasyPts)
+X2022PassingDefense <- as.data.frame(X2022PassingDefense)
+
+colnames(X2022PassingDefense)[3] <- "GamesPlayed"
+
+X2022PassingDefense <- transform(X2022PassingDefense, FantasyPPG = TotFantasyPts / GamesPlayed)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
