@@ -102,6 +102,14 @@ defenseFull <- defenseFull[,-c(5,19)]
 defenseFull <- cbind(defenseFull[,-c(13)],'AvgFantasyPoints' = defenseFull[,13])
 ```
 
+```{r}
+#export df as csv to use in other files
+write.csv(defenseFull, "defenseFull.csv", row.names = FALSE)
+```
+
+
+
+
 
 
 
