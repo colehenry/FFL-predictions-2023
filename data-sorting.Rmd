@@ -42,5 +42,21 @@ X2022PassingDefense <- as.data.frame(X2022PassingDefense)
 colnames(X2022PassingDefense)[3] <- "GamesPlayed"
 
 X2022PassingDefense <- transform(X2022PassingDefense, FantasyPPG = TotFantasyPts / GamesPlayed)
+
+#vector of team names in order we want
+TeamOrderPassing <- X2022PassingDefense[,2]
+
+#sorting the other dataset to have the teams in the right order
+X2022TeamDefenseSorted <- X2022TeamDefense[match(TeamOrderPassing,X2022TeamDefense$Tm), ]
+X2022TeamDefenseSorted <- as.data.frame(X2022TeamDefenseSorted)
+X2022TeamDefenseSorted <-cbind(X2022TeamDefenseSorted, TotFantasyPoints = X2022PassingDefense[,27])
+X2022TeamDefenseSorted <- as.data.frame(X2022TeamDefenseSorted)
+
+#checking correlation between all numeric vars
+cor(X2022TeamDefenseSorted[,unlist(lapply(X2022TeamDefenseSorted, is.numeric))],X2022TeamDefenseSorted$TotFantasyPoints)
+
+allVars <- lm(X2022TeamDefenseSorted$TotFantasyPoints ~ ., data = X2022TeamDefenseSorted)
+
+summary(allVars)
 ```
 
